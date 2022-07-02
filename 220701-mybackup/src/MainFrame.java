@@ -1,5 +1,6 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
@@ -236,6 +237,7 @@ settingAuto: 자동일 때 텍스트필드에 정렬되서 보여주기 위한 �
 random(): 랜덤 번호를 생성하여 string 값으로 반환한다. 
 lookAndSet(인덱스,숫자): 텍스트필드에 랜덤값을 나타낸다.그 나타낸 랜덤값을 배열에 set해준다. 
 loof(): lookAndSet()메소드를 하나하나씩 적용
+lastNum(): lastNumber 배열 생성하는 메소드 .
 comboToString() : 콤보 박스 선택한 결과를 string 으로 넘긴다.
 setReset() :텍스트 박스 입력되는 부분을 공백으로 리셋하는 메소드 
 autoSort():자동생성 배열을 텍스트필드에 보여주는 메소드
@@ -296,20 +298,17 @@ class BigFrame extends JPanel{
 		tf5 = new JTextField(3);
 		tf6 = new JTextField(3);
 
-		//텍스트 필드에 입력된 텍스트를 String 값으로 가져 온 배열
-		getTextAll = new ArrayList<>(Arrays.asList(tf1.getText(),tf2.getText(),tf3.getText(),tf4.getText(),tf5.getText(),tf6.getText()));
+		//텍스트 필드에 입력된 텍스트를 String 값으로 가져 올 배열- 현재 비워져 있음. 
+		getTextAll = new ArrayList<>(Arrays.asList("","","","","",""));
 		
 		//빈 배열 생성
 		lastNumber = new ArrayList<>(Arrays.asList(0,0,0,0,0,0));
-		
-		//자동일 때만 쓰는 배열 순서대로 
-		settingAuto = new ArrayList<>(Arrays.asList(0,0,0,0,0,0));
-		
+	
 		//입력 버튼
 		JButton smallBtn = new JButton("입력");
 		
 		// 숫자가 아닌값은 입력하지 못하게 막아준다.
-		KeyListener keylistener = new KeyListener() {
+		KeyListener keylistener = new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {	//키보드에 KeyListener를 걸어주어 키보드가 타이핑 되면
 				char c = e.getKeyChar();		//타이밍된 값을 char값으로 받아오고
@@ -318,13 +317,8 @@ class BigFrame extends JPanel{
 					return;
 				}
 			}
-			@Override
-			public void keyReleased(KeyEvent e) {
-			}
-			@Override
-			public void keyPressed(KeyEvent e) {
-			}
 		};
+		
 		tf1.addKeyListener(keylistener);
 		tf2.addKeyListener(keylistener);
 		tf3.addKeyListener(keylistener);
@@ -335,80 +329,72 @@ class BigFrame extends JPanel{
 		smallBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
 				//스위치 케이스 문이 좀 더 쉽게 보이지 않을까???- 혜령의견
-				
-				//콤보 박스가 자동 일 떄. 
-				String num = "";
-				if (comboToString() == "자동") {
-					int i = 0;
-					while (true) {
-						num = random();
-						if (!getTextAll.contains(num)) {//랜덤번호가 중복되지 않는다면, 텍스트 필드에 랜덤값을 보여주고, 배열에 넣는다. 
-							if (i ==6) {
-								break;
-							}
-							lookAndSet(i, num);//배열에 랜덤값을 차례로 넣어줌
-							i++;
-						}
-						
-					}
-					autoSort();//자동생성 배열을 텍스트필드에 보여주는 메소드
-					tfSetEnabled(false);
-				}
-				
-				/*getTextAll에 공백null값이 존재하는지 확인할수 있는거 */
-				if (comboToString() == "반자동") {
-					loop();//사용자가 텍스트필드에 입력한 값을 배열에 넣어주는 메소드 
-					for (int i = 0; i<6; i++) {
-						if ( getTextAll.get(i).equals("") ) {//텍스트 필드가 비워져 있으면 
-							while (true) {
-								num = random();
-								if (!getTextAll.contains(num)) {//랜덤값을 중복되지 않게 텍스트 필드에 나타내고 , 배열에도 넣어주는 것. 
-									lookAndSet(i, num);
+				switch(comboToString()) {
+				case "자동":
+					String num = "";
+					//콤보 박스가 자동 일 떄. 
+					
+					if (comboToString() == "자동") {
+						int i = 0;
+						while (true) {
+							num = random();
+							if (!getTextAll.contains(num)) {//랜덤번호가 중복되지 않는다면, 텍스트 필드에 랜덤값을 보여주고, 배열에 넣는다. 
+								if (i ==6) {
 									break;
+								}
+								lookAndSet(i, num);//배열에 랜덤값을 차례로 넣어줌
+								i++;
+							}
+							
+						}
+						lastNum();//현재 텍스트 필드에 입력된 값을 lastNumber라는 integer 배열로 변환시켜 주는 메소드
+						autoSort();//숫자를 오름차순으로 정렬하여 텍스트 필드에 보여주는 메소드
+						tfSetEnabled(false);
+					}
+					break;
+				
+				case "반자동":
+					/*getTextAll에 공백null값이 존재하는지 확인할수 있는거 */
+					if (comboToString() == "반자동") {
+						loop();//사용자가 텍스트필드에 입력한 값을 배열에 넣어주는 메소드 
+						for (int i = 0; i<6; i++) {
+							if ( getTextAll.get(i).equals("") ) {//텍스트 필드가 비워져 있으면 
+								while (true) {
+									num = random();
+									if (!getTextAll.contains(num)) {//랜덤값을 중복되지 않게 텍스트 필드에 나타내고 , 배열에도 넣어주는 것. 
+										lookAndSet(i, num);
+										break;
+									}
 								}
 							}
 						}
+						lastNum();//현재 텍스트 필드에 입력된 값을 lastNumber라는 integer 배열로 변환시켜 주는 메소드
+						tfSetEnabled(false);
 					}
-					tfSetEnabled(false);
-				}
-				//수동일 떄 
-				if (comboToString() == "수동") {
-					loop();//사용자가 텍스트필드에 입력한 값을 배열에 넣어주는 메소드
-					int count = 0;
-					for (int i = 0; i<6; i++) {
-						if (getTextAll.get(i).equals("") ) { //텍스트 필드가 비워져 있으면 경고창을 띄워줍니다
-							JOptionPane.showMessageDialog(null,  "비어있는 값이 있습니다", "경고", JOptionPane.WARNING_MESSAGE);
-							break;
-						} else {
-							count++; // 비워져 있지 않으면 count를 올립니다.
-						}
-						if (count==6) {	// 모든 칸이 비워져있지 않으면 패널을 고정시킵니다.
-							tfSetEnabled(false);
-						}
-					}
-				}
-				
-				//lastNumber 라는 배열에 
-				//현재 텍스트 필드에 입력된 값을  받아서 integer 값으로 변환하였다. 
-				for(int i =0; i<6; i++) {
-					if(getTextAll.get(i).equals("")) {
-						lastNumber.set(i,0);
-					}else {
-						lastNumber.set(i,Integer.valueOf(getTextAll.get(i)));
-					}
+					break;
 					
+				case "수동":
+					//수동일 떄 
+					if (comboToString() == "수동") {
+						loop();//사용자가 텍스트필드에 입력한 값을 배열에 넣어주는 메소드
+						int count = 0;
+						for (int i = 0; i<6; i++) {
+							if (getTextAll.get(i).equals("") ) { //텍스트 필드가 비워져 있으면 경고창을 띄워줍니다
+								JOptionPane.showMessageDialog(null,  "비어있는 값이 있습니다", "경고", JOptionPane.WARNING_MESSAGE);
+								break;
+							} else {
+								count++; // 비워져 있지 않으면 count를 올립니다.
+							}
+							if (count==6) {	// 모든 칸이 비워져있지 않으면 패널을 고정시킵니다.
+								tfSetEnabled(false);
+							}
+						}
+					}
+					lastNum();//현재 텍스트 필드에 입력된 값을 lastNumber라는 integer 배열로 변환시켜 주는 메소드
+					break;
 				}
-				
-				Collections.sort(lastNumber);
-				
-				
-				//확인용
-//				System.out.println(lastNumber);
-				
-				
-				
+				////////////스위치 문 끝
 				
 				//입력 버튼을 누루면 메세지 창을 띄웁니다. 
 	//			JOptionPane.showConfirmDialog(null,"입력한 번호를 확인하세요","사용자가 입력한 번호를 확인합니다. ",JOptionPane.YES_NO_OPTION);//yes는 0 리턴, no는 1리턴
@@ -432,34 +418,31 @@ class BigFrame extends JPanel{
 		setSize(100,100);
 		
 	}
-	//받은 값 정렬해서 텍스트필드에 보여주는 메소드 
-	//푸시할꺼임
-	public void autoSort() {
+	
+	public List<Integer> lastNum() {
+		//lastNumber 라는 배열에 
 		//현재 텍스트 필드에 입력된 값을  받아서 integer 값으로 변환하였다. 
 		for(int i =0; i<6; i++) {
 			if(getTextAll.get(i).equals("")) {
-				settingAuto.set(i,0);
+				lastNumber.set(i,0);
 			}else {
-				settingAuto.set(i,Integer.valueOf(getTextAll.get(i)));
+				lastNumber.set(i,Integer.valueOf(getTextAll.get(i)));
 			}
-			
 		}
-		//오름차순 정렬
-		Collections.sort(settingAuto);
-		
-		
-		//정렬된거 텍스트필드에 보여주기 
-		tf1.setText(String.valueOf(settingAuto.get(0)));
-		tf2.setText(String.valueOf(settingAuto.get(1)));
-		tf3.setText(String.valueOf(settingAuto.get(2)));
-		tf4.setText(String.valueOf(settingAuto.get(3)));
-		tf5.setText(String.valueOf(settingAuto.get(4)));
-		tf6.setText(String.valueOf(settingAuto.get(5)));
-	
+		Collections.sort(lastNumber);
+		return lastNumber;
 	}
 	
-	
-	
+	//받은 값 정렬해서 텍스트필드에 보여주는 메소드 
+	public void autoSort() {
+		//텍스트필드에 보여줌
+		tf1.setText(String.valueOf(lastNumber.get(0)));
+		tf2.setText(String.valueOf(lastNumber.get(1)));
+		tf3.setText(String.valueOf(lastNumber.get(2)));
+		tf4.setText(String.valueOf(lastNumber.get(3)));
+		tf5.setText(String.valueOf(lastNumber.get(4)));
+		tf6.setText(String.valueOf(lastNumber.get(5)));
+	}
 	
 	
 	
