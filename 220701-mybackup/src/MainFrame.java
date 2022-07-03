@@ -329,69 +329,62 @@ class BigFrame extends JPanel{
 		smallBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				//스위치 케이스 문이 좀 더 쉽게 보이지 않을까???- 혜령의견
-				switch(comboToString()) {
+				// 스위치 케이스 문이 좀 더 쉽게 보이지 않을까???- 혜령의견
+				switch (comboToString()) {
 				case "자동":
 					String num = "";
-					//콤보 박스가 자동 일 떄. 
-					
-					if (comboToString() == "자동") {
-						int i = 0;
-						while (true) {
-							num = random();
-							if (!getTextAll.contains(num)) {//랜덤번호가 중복되지 않는다면, 텍스트 필드에 랜덤값을 보여주고, 배열에 넣는다. 
-								if (i ==6) {
+					// 콤보 박스가 자동 일 떄.
+					int j = 0;
+					while (true) {
+						num = random();
+						if (!getTextAll.contains(num)) {// 랜덤번호가 중복되지 않는다면, 텍스트 필드에 랜덤값을 보여주고, 배열에 넣는다.
+							if (j == 6) {
+								break;
+							}
+							lookAndSet(j, num);// 배열에 랜덤값을 차례로 넣어줌
+							j++;
+						}
+
+					}
+					lastNum();// 현재 텍스트 필드에 입력된 값을 lastNumber라는 integer 배열로 변환시켜 주는 메소드
+					autoSort();// 숫자를 오름차순으로 정렬하여 텍스트 필드에 보여주는 메소드
+					tfSetEnabled(false);
+					break;
+
+				case "반자동":
+					/* getTextAll에 공백null값이 존재하는지 확인할수 있는거 */
+					loop();// 사용자가 텍스트필드에 입력한 값을 배열에 넣어주는 메소드
+					for (int i = 0; i < 6; i++) {
+						if (getTextAll.get(i).equals("")) {// 텍스트 필드가 비워져 있으면
+							while (true) {
+								num = random();
+								if (!getTextAll.contains(num)) {// 랜덤값을 중복되지 않게 텍스트 필드에 나타내고 , 배열에도 넣어주는 것.
+									lookAndSet(i, num);
 									break;
 								}
-								lookAndSet(i, num);//배열에 랜덤값을 차례로 넣어줌
-								i++;
-							}
-							
-						}
-						lastNum();//현재 텍스트 필드에 입력된 값을 lastNumber라는 integer 배열로 변환시켜 주는 메소드
-						autoSort();//숫자를 오름차순으로 정렬하여 텍스트 필드에 보여주는 메소드
-						tfSetEnabled(false);
-					}
-					break;
-				
-				case "반자동":
-					/*getTextAll에 공백null값이 존재하는지 확인할수 있는거 */
-					if (comboToString() == "반자동") {
-						loop();//사용자가 텍스트필드에 입력한 값을 배열에 넣어주는 메소드 
-						for (int i = 0; i<6; i++) {
-							if ( getTextAll.get(i).equals("") ) {//텍스트 필드가 비워져 있으면 
-								while (true) {
-									num = random();
-									if (!getTextAll.contains(num)) {//랜덤값을 중복되지 않게 텍스트 필드에 나타내고 , 배열에도 넣어주는 것. 
-										lookAndSet(i, num);
-										break;
-									}
-								}
 							}
 						}
-						lastNum();//현재 텍스트 필드에 입력된 값을 lastNumber라는 integer 배열로 변환시켜 주는 메소드
-						tfSetEnabled(false);
 					}
+					lastNum();// 현재 텍스트 필드에 입력된 값을 lastNumber라는 integer 배열로 변환시켜 주는 메소드
+					tfSetEnabled(false);
 					break;
-					
+
 				case "수동":
-					//수동일 떄 
-					if (comboToString() == "수동") {
-						loop();//사용자가 텍스트필드에 입력한 값을 배열에 넣어주는 메소드
-						int count = 0;
-						for (int i = 0; i<6; i++) {
-							if (getTextAll.get(i).equals("") ) { //텍스트 필드가 비워져 있으면 경고창을 띄워줍니다
-								JOptionPane.showMessageDialog(null,  "비어있는 값이 있습니다", "경고", JOptionPane.WARNING_MESSAGE);
-								break;
-							} else {
-								count++; // 비워져 있지 않으면 count를 올립니다.
-							}
-							if (count==6) {	// 모든 칸이 비워져있지 않으면 패널을 고정시킵니다.
-								tfSetEnabled(false);
-							}
+					// 수동일 떄
+					loop();// 사용자가 텍스트필드에 입력한 값을 배열에 넣어주는 메소드
+					int count = 0;
+					for (int i = 0; i < 6; i++) {
+						if (getTextAll.get(i).equals("")) { // 텍스트 필드가 비워져 있으면 경고창을 띄워줍니다
+							JOptionPane.showMessageDialog(null, "비어있는 값이 있습니다", "경고", JOptionPane.WARNING_MESSAGE);
+							break;
+						} else {
+							count++; // 비워져 있지 않으면 count를 올립니다.
+						}
+						if (count == 6) { // 모든 칸이 비워져있지 않으면 패널을 고정시킵니다.
+							tfSetEnabled(false);
 						}
 					}
-					lastNum();//현재 텍스트 필드에 입력된 값을 lastNumber라는 integer 배열로 변환시켜 주는 메소드
+					lastNum();// 현재 텍스트 필드에 입력된 값을 lastNumber라는 integer 배열로 변환시켜 주는 메소드
 					break;
 				}
 				////////////스위치 문 끝
