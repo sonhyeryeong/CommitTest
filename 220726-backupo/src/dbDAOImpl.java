@@ -8,7 +8,7 @@ import _TEAMPROJECT_DB_UTIL.DBUtil;
 public class dbDAOImpl implements dbDAO {
 
 	private String resultMapping(ResultSet rs) throws SQLException {// 정보를 새로 배치시켜서 새로운 객체를 만드는 것을 보통 mapping이라고 한다.
-		String imageURL = rs.getString("product_image");
+		String imageURL = rs.getString("product_Name");
 		return imageURL;
 	}
 
@@ -66,10 +66,10 @@ public class dbDAOImpl implements dbDAO {
 	}
 
 	
-
+	//이미지 이름을 ? 
 	@Override
-	public String readimg() throws SQLException {
-		String query = "select product_image from all_product where product_Name like ?";
+	public String readimg(String what) throws SQLException {
+		String query = "select product_Name from all_product where product_Name like ?";
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -79,17 +79,23 @@ public class dbDAOImpl implements dbDAO {
 			// 파라미터에 쿼리문 넣는다.
 			pstmt = conn.prepareStatement(query);
 			// 파라미터에 (?위치,어떤 값이 들어갈지) 적어 쿼리문을 준비시킬 수 있다.
-			pstmt.setString(1, "%상의_1%");
+			pstmt.setString(1, "%"+what+"%");
 			rs = pstmt.executeQuery();
 			
 			if (rs.next()) {
-				return rs.getString("product_image");
+				return rs.getString("product_Name");
 			}
 		} finally {
 			DBUtil.closeRs(rs);
 			DBUtil.closeStmt(pstmt);
 			DBUtil.closeConn(conn);
 		}
+		return null;
+	}
+
+	@Override
+	public String readimg() throws SQLException {
+		// TODO Auto-generated method stub
 		return null;
 	}
 }

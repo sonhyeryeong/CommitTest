@@ -26,6 +26,9 @@ import javax.swing.border.LineBorder;
  * 
  * */
 public class LookCodiset extends JDialog {
+	int count;
+	
+	
 	//MainFrame3를 owner 로 쓴다. 
 	public LookCodiset(JFrame owner){
 		super(owner,true);
@@ -57,17 +60,26 @@ public class LookCodiset extends JDialog {
 		
 		//[좋아요]버튼
 		ImageIcon like = new ImageIcon(".\\img\\likeImg.png");//이미지 경로지정
+		ImageIcon like2 = new ImageIcon(".\\img\\like2.png");//이미지 경로지정
 		JButton likeBtn = new JButton(like);
 		likeBtn.setBounds(784, 2, 38, 27);
 		likeBtn.setPreferredSize(new Dimension(32, 32));
 		likeBtn.setContentAreaFilled(false);//버튼 안 색 채우기 안함
 		likeBtn.setBorderPainted(false);//버튼 외각선 안 보이게
 		likeBtn.setFocusPainted(false);// 버튼 눌렀을 때 외각선 안 보이게
-		
+		count =0;
 		likeBtn.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("좋아요 버튼 눌렀음");
+				++count;
+				if (count%2==0) {
+					likeBtn.setIcon(like);
+		            System.out.println("좋아요 취소 -> 좋아요 db에 데이터 삭제");
+		        }else {
+		        	System.out.println("좋아요 버튼 클릭 -> 좋아요 db에 데이터 삽입");
+		        	likeBtn.setIcon(like2);
+		        }
 			}
 		});
 		backBtn.addActionListener(new ActionListener() {

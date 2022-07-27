@@ -7,4 +7,5 @@ public interface dbDAO {
 	int read() throws SQLException;
 //	String readimg(String table) throws SQLException;
 	String readimg() throws SQLException;
+	String readimg(String what) throws SQLException;
 }
